@@ -40,26 +40,101 @@ pip install -r requirements.txt
 
 ---
 
-## Project Structure
+# Complete Project Structure and Required Datasets for MediScan MS-VA
+
+Below is a detailed structure for your project, including all main code files, folders, and recommended datasets for development, testing, and demonstration.
+
+---
+
+## Project Directory Structure
 
 ```
 mediscan-ms-va/
-├── App.py                          # Main Streamlit application
-├── requirements.txt                # Python dependencies
-├── README.md                       # This file
-├── backend/
-│   ├── __init__.py                # Backend module initialization
-│   ├── ocr_processor.py           # OCR processing (EasyOCR/Tesseract)
-│   ├── medicine_extractor.py      # Extract medicine info from OCR
-│   ├── reminder_system.py         # Medicine reminders & notifications
-│   ├── voice_assistant.py         # Text-to-speech functionality
-│   └── database_handler.py        # Data persistence (JSON-based)
-└── data/                          # Application data (auto-created)
-    ├── medicines.json             # Medicine inventory
-    ├── reminders.json             # Reminder settings
-    └── settings.json              # App settings
+├── App.py                      # Main Streamlit application frontend
+├── requirements.txt            # Python dependencies
+├── README.md                   # Project documentation
+├── backend/                    # Core backend modules
+│   ├── __init__.py             # Backend package initialization
+│   ├── ocr_processor.py        # OCR processing (EasyOCR/Tesseract)
+│   ├── medicine_extractor.py   # Extracts medicine info from OCR text
+│   ├── reminder_system.py      # Medicine reminders & notifications
+│   ├── voice_assistant.py      # Text-to-speech and voice feedback
+│   └── database_handler.py     # Data persistence (JSON-based)
+├── data/                       # Application data (auto-created)
+│   ├── medicines.json          # Medicine inventory (auto-generated)
+│   ├── reminders.json          # Reminder settings (auto-generated)
+│   └── settings.json           # App/user settings (auto-generated)
+├── dataset/                    # Required datasets for testing/demo
+│   ├── labels/                 # Sample medicine label images (JPEG/PNG)
+│   ├── prescriptions/          # Sample prescription images (JPEG/PNG)
+│   └── medicines.csv           # Structured medicine info (CSV, optional)
+└── .gitignore                  # (Optional) Ignore data/dataset files in git
 ```
 
+---
+
+## Required Datasets
+
+### 1. `dataset/labels/`
+- **Purpose:** Store sample images of medicine labels for OCR and extraction testing.
+- **Content:** JPEG/PNG images of medicine strips, bottles, boxes, etc.
+- **Example Files:**
+  - `paracetamol_strip.jpg`
+  - `amoxicillin_bottle.png`
+  - `ibuprofen_box.jpeg`
+
+### 2. `dataset/prescriptions/`
+- **Purpose:** Store sample images of prescriptions for multi-medicine and instruction extraction.
+- **Content:** JPEG/PNG scans or photos of handwritten or printed prescriptions.
+- **Example Files:**
+  - `prescription_01.jpg`
+  - `prescription_dr_singh.png`
+  - `prescription_child_fever.jpeg`
+
+### 3. `dataset/medicines.csv` (optional but recommended)
+- **Purpose:** Provide a structured reference database for medicine validation and extraction accuracy.
+- **Content:** CSV file with columns such as:
+  - `medicine_name`
+  - `generic_name`
+  - `category`
+  - `manufacturer`
+  - `expiry_date`
+  - `batch_number`
+  - `dosage_form`
+  - `strength`
+- **Example Row:**
+  ```
+  Paracetamol,Acetaminophen,Analgesic,ABC Pharma,2025-12-31,B12345,Tablet,500mg
+  ```
+
+---
+
+## Notes on Dataset Usage
+
+- **OCR Testing:** Use images in `labels/` and `prescriptions/` for validating OCR extraction and medicine info parsing.
+- **Extraction Validation:** Use `medicines.csv` to cross-check extracted names, dosages, expiry dates, and other fields.
+- **Demo & Documentation:** Reference these datasets in your documentation and demo scripts to show real-world usage.
+- **Unit Testing:** Write automated tests using these sample files to ensure extraction and reminder logic works as expected.
+
+---
+
+## Example Dataset Sources
+
+- [RxImage API](https://rximage.nlm.nih.gov/) – Medicine label images
+- [OpenFDA Drug Label Dataset](https://open.fda.gov/data/drug/label/) – Structured drug info
+- [Kaggle Medical Prescription Datasets](https://www.kaggle.com/datasets) – Prescription images
+
+---
+
+## Best Practices
+
+- **Anonymize sensitive data** in prescription images.
+- **Use diverse samples** (different brands, forms, handwriting styles).
+- **Document your dataset** (add a `README.md` in the `dataset/` folder describing sources and usage).
+
+---
+
+This structure ensures your project is organized, testable, and ready for real-world
 ---
 
 ## Features
