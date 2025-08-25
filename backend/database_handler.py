@@ -6,7 +6,7 @@ Handles data persistence and retrieval
 import json
 import os
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import logging
 import uuid

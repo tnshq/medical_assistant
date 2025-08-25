@@ -1,0 +1,10 @@
+{
+  "voice_enabled": true,
+  "voice_language": "en-US",
+  "voice_engine": "pyttsx3",
+  "reminder_days_before_expiry": 7,
+  "default_reminder_time": "09:00",
+  "theme": "light",
+  "auto_backup": true,
+  "backup_frequency": "daily"
+}
