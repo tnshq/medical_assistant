@@ -2,7 +2,7 @@
 Voice Assistant Module for MediScan
 Handles text-to-speech and voice feedback functionality
 """
-
+from typing import List, Dict
 import pyttsx3
 import threading
 import logging
