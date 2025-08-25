@@ -1,0 +1,21 @@
+medicine_name,generic_name,category,manufacturer,expiry_date,batch_number,dosage_form,strength,storage_instructions,warnings
+Paracetamol,Acetaminophen,Analgesic,Cipla Ltd,2025-12-31,PCT2024B001,Tablet,500mg,Store below 30°C in dry place,Keep out of reach of children
+Amoxicillin,Amoxicillin,Antibiotic,Sun Pharma,2025-06-15,AMX2024S002,Capsule,250mg,Store in cool dry place,Complete full course as prescribed
+Ibuprofen,Ibuprofen,NSAID,Ranbaxy Laboratories,2024-11-30,IBU2024R003,Tablet,400mg,Store at room temperature,Take with food to avoid stomach upset
+Omeprazole,Omeprazole,PPI,Dr Reddy's Labs,2025-08-20,OMP2024D004,Capsule,20mg,Store below 25°C,Take before meals
+Metformin,Metformin,Antidiabetic,Lupin Ltd,2025-09-10,MET2024L005,Tablet,850mg,Store in tight container,Monitor blood sugar regularly
+Losartan,Losartan,ARB,Torrent Pharma,2025-07-25,LOS2024T006,Tablet,50mg,Store away from moisture,May cause dizziness
+Atorvastatin,Atorvastatin,Statin,Cadila Healthcare,2025-10-05,ATO2024C007,Tablet,10mg,Store below 30°C,Take at bedtime for best results
+Ciprofloxacin,Ciprofloxacin,Antibiotic,Alkem Labs,2024-12-20,CIP2024A008,Tablet,500mg,Protect from light,Avoid dairy products
+Azithromycin,Azithromycin,Antibiotic,Glenmark Pharma,2025-05-30,AZI2024G009,Tablet,250mg,Store in cool place,Take on empty stomach
+Cetirizine,Cetirizine,Antihistamine,Mankind Pharma,2025-11-15,CET2024M010,Tablet,10mg,Store at room temperature,May cause drowsiness
+Aspirin,Acetylsalicylic acid,NSAID,Bayer India,2025-03-31,ASP2024B011,Tablet,75mg,Store in dry place,Not for children under 16
+Ranitidine,Ranitidine,H2 Blocker,GSK India,2025-04-20,RAN2024G012,Tablet,150mg,Store below 25°C,Take twice daily
+Doxycycline,Doxycycline,Antibiotic,Abbott India,2025-02-28,DOX2024A013,Capsule,100mg,Protect from sunlight,Avoid dairy products
+Amlodipine,Amlodipine,Calcium Channel Blocker,Pfizer India,2025-08-31,AML2024P014,Tablet,5mg,Store in cool place,Monitor blood pressure
+Pantoprazole,Pantoprazole,PPI,Zydus Cadila,2025-06-10,PAN2024Z015,Tablet,40mg,Store below 30°C,Take before breakfast
+Levofloxacin,Levofloxacin,Antibiotic,Biocon Ltd,2024-10-15,LEV2024B016,Tablet,750mg,Store away from heat,Complete full course
+Clopidogrel,Clopidogrel,Antiplatelet,Sanofi India,2025-09-20,CLO2024S017,Tablet,75mg,Store at room temperature,Take with or without food
+Diclofenac,Diclofenac,NSAID,Novartis India,2025-01-31,DIC2024N018,Gel,1%,Store below 25°C,For external use only
+Montelukast,Montelukast,Leukotriene Antagonist,Merck India,2025-07-15,MON2024M019,Tablet,10mg,Store in dry place,Take in evening
+Salbutamol,Albuterol,Bronchodilator,Cipla Ltd,2025-05-20,SAL2024C020,Inhaler,100mcg,Store upright below 30°C,Shake well before use
