@@ -12,6 +12,27 @@ from PIL import Image
 import io
 import base64
 
+import sys
+import importlib
+
+def check_dependencies():
+    """Check if all required modules are installed"""
+    required_modules = [
+        'streamlit', 'pandas', 'PIL', 'cv2', 
+        'pytesseract', 'easyocr', 'pyttsx3'
+    ]
+    
+    missing = []
+    for module in required_modules:
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            missing.append(module)
+    
+    if missing:
+        st.error(f"Missing dependencies: {', '.join(missing)}")
+        st.info("Run: pip install -r requirements.txt")
+        sys.exit(1)
 # Import backend modules
 from backend.ocr_processor import OCRProcessor
 from backend.medicine_extractor import MedicineExtractor

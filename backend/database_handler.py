@@ -431,7 +431,7 @@ class DatabaseHandler:
         except Exception as e:
             logger.error(f"Error restoring data: {e}")
             return False
-    
+
     def get_statistics(self) -> Dict:
         """
         Get database statistics
