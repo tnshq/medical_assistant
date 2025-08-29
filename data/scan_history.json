@@ -64,5 +64,16 @@
     "ocr_engine": "easyocr",
     "processing_time": 1.7152011394500732,
     "error": null
+  },
+  {
+    "id": "786842a7-053c-47cb-9a91-4e3b6dbad376",
+    "timestamp": "2025-08-29T16:04:04.158540",
+    "scan_type": "Handwritten Prescription",
+    "success": false,
+    "medicines_found": 0,
+    "confidence": 0.42389687183793107,
+    "ocr_engine": "easyocr",
+    "processing_time": 7.651420831680298,
+    "error": null
   }
 ]
