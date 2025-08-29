@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Streamlit
+.streamlit/
+
+# Data files (optional - remove if you want to track data)
+data/
+!data/.gitkeep
+
+# Dataset files (optional - uncomment to ignore)
+# dataset/
+# !dataset/.gitkeep
+
+# API Keys and secrets
+.env
+*.env
+secrets.toml
+config.toml
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.coverage
+
+# Backup files
+*.bak
+*.backup
+backups/
+
+# Temporary files
+temp/
+tmp/
+*.tmp

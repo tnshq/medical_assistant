@@ -1,0 +1,68 @@
+[
+  {
+    "id": "f5be4668-dbde-463b-b9cf-be50901284f6",
+    "timestamp": "2025-08-29T15:27:51.737135",
+    "scan_type": "Medicine Label",
+    "success": true,
+    "medicines_found": 1,
+    "confidence": 0.5029038012838601,
+    "ocr_engine": "easyocr",
+    "processing_time": 2.9677367210388184,
+    "error": null
+  },
+  {
+    "id": "dd3a960d-4606-4f44-bbe7-eaaab121c4ab",
+    "timestamp": "2025-08-29T15:47:20.731642",
+    "scan_type": "Medicine Label",
+    "success": true,
+    "medicines_found": 1,
+    "confidence": 0.283502777371688,
+    "ocr_engine": "easyocr",
+    "processing_time": 2.6995649337768555,
+    "error": null
+  },
+  {
+    "id": "ac9cf20a-b881-4aff-94ae-8f8d8b2459f0",
+    "timestamp": "2025-08-29T15:50:27.888925",
+    "scan_type": "Medicine Label",
+    "success": true,
+    "medicines_found": 1,
+    "confidence": 0.147418430928639,
+    "ocr_engine": "easyocr",
+    "processing_time": 2.2280352115631104,
+    "error": null
+  },
+  {
+    "id": "344db5ec-b59b-4f82-9e4c-7a988fc8d8d0",
+    "timestamp": "2025-08-29T15:51:16.678473",
+    "scan_type": "Medicine Label",
+    "success": true,
+    "medicines_found": 1,
+    "confidence": 0.15385571474510742,
+    "ocr_engine": "easyocr",
+    "processing_time": 2.482914924621582,
+    "error": null
+  },
+  {
+    "id": "acd10730-9860-48af-abc9-47f95a72cb4f",
+    "timestamp": "2025-08-29T15:54:46.425833",
+    "scan_type": "Handwritten Prescription",
+    "success": false,
+    "medicines_found": 0,
+    "confidence": 0.42389687183793107,
+    "ocr_engine": "easyocr",
+    "processing_time": 4.513859033584595,
+    "error": null
+  },
+  {
+    "id": "4632836a-ecc9-44ef-8c96-e67a3b5cc43d",
+    "timestamp": "2025-08-29T15:55:03.509960",
+    "scan_type": "Handwritten Prescription",
+    "success": false,
+    "medicines_found": 0,
+    "confidence": 0.42389687183793107,
+    "ocr_engine": "easyocr",
+    "processing_time": 1.7152011394500732,
+    "error": null
+  }
+]

@@ -1,387 +1,386 @@
 """
 Voice Assistant Module for MediScan
-Handles text-to-speech and voice feedback functionality
+Handles text-to-speech and voice commands for elderly users
 """
 
 import pyttsx3
 import threading
-from typing import Optional, List, Dict
 import logging
+import time
 from typing import Optional, Dict
-import os
-
-try:
-    from gtts import gTTS
-    import pygame
-    import tempfile
-    GTTS_AVAILABLE = True
-except ImportError:
-    GTTS_AVAILABLE = False
+import re
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class VoiceAssistant:
     """
-    Voice assistant for MediScan application
-    Provides text-to-speech functionality using multiple engines
+    Voice assistant with text-to-speech capabilities
+    Designed to be elderly-friendly with clear, slow speech
     """
-    
-    def __init__(self, engine_type: str = "pyttsx3", language: str = "en-US"):
+
+    def __init__(self, language: str = "en-US"):
         """
         Initialize voice assistant
-        
+
         Args:
-            engine_type: TTS engine to use ("pyttsx3" or "gtts")
-            language: Language code for TTS
+            language: Language code (default: en-US)
         """
-        self.engine_type = engine_type
         self.language = language
         self.is_speaking = False
+        self._speak_lock = threading.Lock()
         self.engine = None
-        
-        # Initialize the TTS engine
+        self.voice_enabled = True
         self._initialize_engine()
-    
+
     def _initialize_engine(self):
-        """Initialize the TTS engine"""
+        """Initialize the pyttsx3 engine with elderly-friendly settings"""
         try:
-            if self.engine_type == "pyttsx3":
-                self._initialize_pyttsx3()
-            elif self.engine_type == "gtts" and GTTS_AVAILABLE:
-                self._initialize_gtts()
+            self.engine = pyttsx3.init()
+
+            if self.engine:
+                # Get available voices
+                voices = self.engine.getProperty('voices')
+                selected_voice = None
+
+                # Try to find appropriate voice
+                for voice in voices:
+                    # Prefer female voices as they're often clearer for elderly
+                    if hasattr(voice, 'gender') and 'female' in str(voice.gender).lower():
+                        selected_voice = voice.id
+                        break
+                    elif hasattr(voice, 'name'):
+                        # Look for clear English voices
+                        if any(keyword in voice.name.lower() for keyword in ['zira', 'hazel', 'susan']):
+                            selected_voice = voice.id
+                            break
+
+                # Set voice if found
+                if selected_voice:
+                    self.engine.setProperty('voice', selected_voice)
+
+                # Set elderly-friendly speaking parameters
+                self.engine.setProperty('rate', 150)      # Slower speech rate
+                self.engine.setProperty('volume', 0.9)    # High volume
+
+                logger.info(f"Voice engine initialized successfully with language: {self.language}")
             else:
-                logger.warning("Falling back to pyttsx3")
-                self._initialize_pyttsx3()
+                logger.error("Failed to initialize pyttsx3 engine")
+
         except Exception as e:
             logger.error(f"Error initializing voice engine: {e}")
             self.engine = None
-    
-    def _initialize_pyttsx3(self):
-        """Initialize pyttsx3 engine"""
-        try:
-            self.engine = pyttsx3.init()
-            
-            # Set properties
-            voices = self.engine.getProperty('voices')
-            
-            # Try to find a voice matching the language
-            selected_voice = None
-            for voice in voices:
-                if self.language.startswith('en') and 'english' in voice.name.lower():
-                    selected_voice = voice.id
-                    break
-                elif self.language.startswith('hi') and 'hindi' in voice.name.lower():
-                    selected_voice = voice.id
-                    break
-            
-            if selected_voice:
-                self.engine.setProperty('voice', selected_voice)
-            
-            # Set speech rate and volume
-            self.engine.setProperty('rate', 180)  # Speed of speech
-            self.engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
-            
-            logger.info(f"pyttsx3 engine initialized with language: {self.language}")
-            
-        except Exception as e:
-            logger.error(f"Error initializing pyttsx3: {e}")
-            self.engine = None
-    
-    def _initialize_gtts(self):
-        """Initialize gTTS engine"""
-        if not GTTS_AVAILABLE:
-            logger.error("gTTS dependencies not available")
-            return
-        
-        try:
-            # Initialize pygame for audio playback
-            pygame.mixer.init()
-            logger.info(f"gTTS engine initialized with language: {self.language}")
-            
-        except Exception as e:
-            logger.error(f"Error initializing gTTS: {e}")
-    
-    def speak(self, text: str, async_mode: bool = True) -> bool:
+
+    def speak(self, text: str, priority: str = "normal", async_mode: bool = True) -> bool:
         """
-        Convert text to speech
-        
+        Speak text using TTS
+
         Args:
             text: Text to speak
+            priority: Priority level (high, normal, low)
             async_mode: Whether to speak asynchronously
-            
+
         Returns:
-            True if successful, False otherwise
+            True if speaking started successfully, False otherwise
         """
         if not text or not text.strip():
             return False
-        
-        if self.is_speaking:
-            logger.info("Already speaking, skipping new request")
+
+        if not self.voice_enabled:
+            logger.info(f"Voice disabled, would speak: {text}")
             return False
-        
+
+        # Clean text for better speech
+        cleaned_text = self._clean_text_for_speech(text)
+
+        with self._speak_lock:
+            # Stop current speech for high priority messages
+            if priority == "high" and self.is_speaking:
+                self.stop_speaking()
+                time.sleep(0.1)  # Brief pause
+            elif self.is_speaking and priority != "high":
+                return False  # Don't interrupt for normal priority
+
+            self.is_speaking = True
+
         try:
             if async_mode:
-                # Speak in a separate thread
-                thread = threading.Thread(target=self._speak_sync, args=(text,))
-                thread.daemon = True
+                thread = threading.Thread(
+                    target=self._speak_sync, 
+                    args=(cleaned_text,),
+                    daemon=True
+                )
                 thread.start()
                 return True
             else:
-                return self._speak_sync(text)
-                
+                return self._speak_sync(cleaned_text)
+
         except Exception as e:
             logger.error(f"Error in speak method: {e}")
+            with self._speak_lock:
+                self.is_speaking = False
             return False
-    
+
     def _speak_sync(self, text: str) -> bool:
-        """
-        Synchronous speech method
-        
-        Args:
-            text: Text to speak
-            
-        Returns:
-            True if successful, False otherwise
-        """
-        self.is_speaking = True
-        
+        """Synchronously speak text"""
         try:
-            if self.engine_type == "pyttsx3" and self.engine:
-                return self._speak_pyttsx3(text)
-            elif self.engine_type == "gtts" and GTTS_AVAILABLE:
-                return self._speak_gtts(text)
+            if self.engine:
+                self.engine.say(text)
+                self.engine.runAndWait()
+                return True
             else:
-                logger.error("No valid TTS engine available")
+                logger.error("No voice engine available")
                 return False
-                
+
+        except Exception as e:
+            logger.error(f"Error in text-to-speech: {e}")
+            return False
+
         finally:
-            self.is_speaking = False
-    
-    def _speak_pyttsx3(self, text: str) -> bool:
-        """Speak using pyttsx3"""
-        try:
-            self.engine.say(text)
-            self.engine.runAndWait()
-            logger.info(f"Spoke text: {text[:50]}...")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error speaking with pyttsx3: {e}")
-            return False
-    
-    def _speak_gtts(self, text: str) -> bool:
-        """Speak using gTTS"""
-        try:
-            # Create gTTS object
-            lang_code = self.language.split('-')[0]  # Extract language code
-            tts = gTTS(text=text, lang=lang_code, slow=False)
-            
-            # Save to temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file:
-                temp_filename = temp_file.name
-                tts.save(temp_filename)
-            
-            # Play the audio file
-            pygame.mixer.music.load(temp_filename)
-            pygame.mixer.music.play()
-            
-            # Wait for playback to complete
-            while pygame.mixer.music.get_busy():
-                threading.Event().wait(0.1)
-            
-            # Clean up temporary file
-            try:
-                os.unlink(temp_filename)
-            except:
-                pass
-            
-            logger.info(f"Spoke text using gTTS: {text[:50]}...")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error speaking with gTTS: {e}")
-            return False
-    
+            with self._speak_lock:
+                self.is_speaking = False
+
     def stop_speaking(self):
         """Stop current speech"""
         try:
-            if self.engine_type == "pyttsx3" and self.engine:
+            if self.engine:
                 self.engine.stop()
-            elif self.engine_type == "gtts" and GTTS_AVAILABLE:
-                pygame.mixer.music.stop()
-            
-            self.is_speaking = False
-            logger.info("Speech stopped")
-            
+
+            with self._speak_lock:
+                self.is_speaking = False
+
         except Exception as e:
             logger.error(f"Error stopping speech: {e}")
-    
-    def set_language(self, language: str):
-        """
-        Set the language for TTS
-        
-        Args:
-            language: Language code (e.g., 'en-US', 'hi-IN')
-        """
-        self.language = language
-        logger.info(f"Language set to: {language}")
-        
-        # Reinitialize engine with new language
-        self._initialize_engine()
-    
+
+    def set_voice_enabled(self, enabled: bool):
+        """Enable or disable voice output"""
+        self.voice_enabled = enabled
+        logger.info(f"Voice {'enabled' if enabled else 'disabled'}")
+
     def set_speech_rate(self, rate: int):
         """
-        Set speech rate for pyttsx3
-        
+        Set speech rate
+
         Args:
-            rate: Speech rate (words per minute)
+            rate: Speech rate (words per minute, 100-300, default 150 for elderly)
         """
-        if self.engine_type == "pyttsx3" and self.engine:
+        if self.engine:
             try:
+                # Clamp rate to reasonable range for elderly users
+                rate = max(100, min(250, rate))
                 self.engine.setProperty('rate', rate)
-                logger.info(f"Speech rate set to: {rate}")
+                logger.info(f"Speech rate set to {rate}")
             except Exception as e:
                 logger.error(f"Error setting speech rate: {e}")
-    
+
     def set_volume(self, volume: float):
         """
-        Set volume for pyttsx3
-        
+        Set speech volume
+
         Args:
             volume: Volume level (0.0 to 1.0)
         """
-        if self.engine_type == "pyttsx3" and self.engine:
+        if self.engine:
             try:
-                self.engine.setProperty('volume', max(0.0, min(1.0, volume)))
-                logger.info(f"Volume set to: {volume}")
+                volume = max(0.0, min(1.0, volume))
+                self.engine.setProperty('volume', volume)
+                logger.info(f"Volume set to {volume}")
             except Exception as e:
                 logger.error(f"Error setting volume: {e}")
-    
-    def get_available_voices(self) -> List[Dict]:
+
+    def test_voice(self) -> bool:
+        """Test voice functionality"""
+        test_message = "Hello! This is a voice test. Can you hear me clearly?"
+        return self.speak(test_message, priority="high", async_mode=False)
+
+    def _clean_text_for_speech(self, text: str) -> str:
+        """Clean text to make it more speech-friendly"""
+        # Remove or replace problematic characters
+        text = re.sub(r'[_*#]', ' ', text)  # Remove markdown
+        text = re.sub(r'\n+', '. ', text)   # Replace newlines with pauses
+        text = re.sub(r'\s+', ' ', text)    # Normalize whitespace
+
+        # Replace abbreviations with full words for clarity
+        replacements = {
+            'mg': 'milligrams',
+            'ml': 'milliliters', 
+            'g': 'grams',
+            'mcg': 'micrograms',
+            'Dr.': 'Doctor',
+            'Mr.': 'Mister',
+            'Mrs.': 'Missus',
+            'Ms.': 'Miss',
+            '&': 'and',
+            '%': 'percent'
+        }
+
+        for abbrev, full in replacements.items():
+            text = re.sub(r'\b' + re.escape(abbrev) + r'\b', full, text, flags=re.IGNORECASE)
+
+        return text.strip()
+
+    # Specialized medicine-related speech methods
+
+    def speak_medicine_reminder(self, medicine_name: str, dosage: str = None, 
+                              time_str: str = None, instructions: str = None) -> bool:
         """
-        Get list of available voices (pyttsx3 only)
-        
-        Returns:
-            List of voice information dictionaries
-        """
-        voices = []
-        
-        if self.engine_type == "pyttsx3" and self.engine:
-            try:
-                engine_voices = self.engine.getProperty('voices')
-                for voice in engine_voices:
-                    voices.append({
-                        'id': voice.id,
-                        'name': voice.name,
-                        'languages': getattr(voice, 'languages', []),
-                        'gender': getattr(voice, 'gender', 'unknown'),
-                        'age': getattr(voice, 'age', 'unknown')
-                    })
-            except Exception as e:
-                logger.error(f"Error getting voices: {e}")
-        
-        return voices
-    
-    def test_speech(self) -> bool:
-        """
-        Test the speech functionality
-        
-        Returns:
-            True if test successful, False otherwise
-        """
-        test_text = "Hello! This is a test of the MediScan voice assistant."
-        return self.speak(test_text, async_mode=False)
-    
-    def speak_medicine_reminder(self, medicine_name: str, time_str: str, 
-                               dosage: str = None) -> bool:
-        """
-        Speak a medicine reminder
-        
+        Speak a medicine reminder with clear, structured information
+
         Args:
             medicine_name: Name of the medicine
-            time_str: Time string
             dosage: Dosage information
-            
+            time_str: Time for taking medicine
+            instructions: Additional instructions
+
         Returns:
-            True if successful, False otherwise
+            True if spoken successfully
         """
-        text = f"Medicine reminder: It's time to take {medicine_name}"
-        
+        message_parts = ["Medicine reminder."]
+
+        if time_str:
+            message_parts.append(f"It is time to take your medicine.")
+
+        message_parts.append(f"Please take {medicine_name}.")
+
         if dosage:
-            text += f", {dosage}"
-        
-        text += f" at {time_str}."
-        
-        return self.speak(text)
-    
-    def speak_expiry_alert(self, medicine_name: str, days_until_expiry: int) -> bool:
+            message_parts.append(f"The dosage is {dosage}.")
+
+        if instructions:
+            message_parts.append(f"Instructions: {instructions}.")
+
+        message_parts.append("Please confirm when you have taken your medicine.")
+
+        full_message = " ".join(message_parts)
+        return self.speak(full_message, priority="high")
+
+    def speak_scan_result(self, medicine_info: Dict) -> bool:
         """
-        Speak an expiry alert
-        
+        Speak the results of a medicine scan
+
+        Args:
+            medicine_info: Dictionary with medicine information
+
+        Returns:
+            True if spoken successfully
+        """
+        name = medicine_info.get('name', 'unknown medicine')
+        dosage = medicine_info.get('dosage', '')
+        expiry_date = medicine_info.get('expiry_date', '')
+
+        message_parts = [f"Scanned medicine: {name}."]
+
+        if dosage:
+            message_parts.append(f"Dosage: {dosage}.")
+
+        if expiry_date:
+            message_parts.append(f"This medicine expires on {expiry_date}.")
+
+        message_parts.append("Scan completed successfully.")
+
+        full_message = " ".join(message_parts)
+        return self.speak(full_message)
+
+    def speak_expiry_warning(self, medicine_name: str, days_until_expiry: int) -> bool:
+        """
+        Speak expiry warning
+
         Args:
             medicine_name: Name of the medicine
             days_until_expiry: Days until expiry
-            
+
         Returns:
-            True if successful, False otherwise
+            True if spoken successfully
         """
-        if days_until_expiry <= 0:
-            text = f"Alert: {medicine_name} has expired. Please do not use it."
-        elif days_until_expiry == 1:
-            text = f"Alert: {medicine_name} expires tomorrow. Please get a replacement."
-        elif days_until_expiry <= 7:
-            text = f"Alert: {medicine_name} expires in {days_until_expiry} days. Consider getting a replacement soon."
+        if days_until_expiry < 0:
+            message = f"Important warning: {medicine_name} has expired. Please do not use this medicine and consult your doctor for a replacement."
+        elif days_until_expiry == 0:
+            message = f"Important warning: {medicine_name} expires today. Please check with your pharmacist or doctor for a replacement."
+        elif days_until_expiry <= 3:
+            message = f"Important notice: {medicine_name} will expire in {days_until_expiry} days. Please arrange for a replacement soon."
         else:
-            text = f"Notice: {medicine_name} expires in {days_until_expiry} days."
-        
-        return self.speak(text)
-    
-    def speak_scan_result(self, medicine_info: Dict) -> bool:
+            message = f"Notice: {medicine_name} will expire in {days_until_expiry} days. Please plan to get a replacement."
+
+        return self.speak(message, priority="high")
+
+    def speak_reminder_confirmation(self, medicine_name: str, action: str) -> bool:
         """
-        Speak the result of a medicine scan
-        
+        Speak confirmation for reminder actions
+
         Args:
-            medicine_info: Dictionary containing medicine information
-            
+            medicine_name: Name of the medicine
+            action: Action taken (taken, missed, etc.)
+
         Returns:
-            True if successful, False otherwise
+            True if spoken successfully
         """
-        medicine_name = medicine_info.get('name', 'unknown medicine')
-        dosage = medicine_info.get('dosage', '')
-        expiry_date = medicine_info.get('expiry_date', '')
-        
-        text = f"Scanned {medicine_name}"
-        
-        if dosage:
-            text += f", {dosage}"
-        
-        if expiry_date:
-            text += f". Expires on {expiry_date}"
-        
-        text += "."
-        
-        return self.speak(text)
-    
+        if action == "taken":
+            message = f"Thank you. I have recorded that you have taken {medicine_name}."
+        elif action == "missed":
+            message = f"I have noted that you missed {medicine_name}. Please try to take it as soon as possible, or consult your doctor."
+        elif action == "skipped":
+            message = f"I have recorded that you skipped {medicine_name}."
+        else:
+            message = f"Action recorded for {medicine_name}."
+
+        return self.speak(message)
+
+    def speak_error_message(self, error_type: str, context: str = "") -> bool:
+        """
+        Speak user-friendly error messages
+
+        Args:
+            error_type: Type of error
+            context: Additional context
+
+        Returns:
+            True if spoken successfully
+        """
+        error_messages = {
+            'scan_failed': 'I could not read the medicine label clearly. Please try scanning again with better lighting.',
+            'no_medicine_found': 'I could not find any medicine information in the image. Please make sure the label is clearly visible.',
+            'network_error': 'There is a network connection problem. Please check your internet connection and try again.',
+            'voice_error': 'There is a problem with the voice system. The application will continue to work normally.',
+            'reminder_error': 'There was a problem setting up the reminder. Please try again.',
+            'general_error': 'Something went wrong. Please try again or contact support if the problem continues.'
+        }
+
+        message = error_messages.get(error_type, error_messages['general_error'])
+
+        if context:
+            message += f" Details: {context}"
+
+        return self.speak(message, priority="high")
+
     def is_available(self) -> bool:
-        """
-        Check if voice assistant is available
-        
-        Returns:
-            True if available, False otherwise
-        """
+        """Check if voice assistant is available"""
         return self.engine is not None
-    
-    def get_status(self) -> Dict:
-        """
-        Get voice assistant status
-        
-        Returns:
-            Dictionary containing status information
-        """
+
+    def get_status(self) -> Dict[str, any]:
+        """Get current status of voice assistant"""
         return {
-            'engine_type': self.engine_type,
+            'available': self.is_available(),
             'language': self.language,
             'is_speaking': self.is_speaking,
-            'available': self.is_available(),
-            'gtts_available': GTTS_AVAILABLE
+            'voice_enabled': self.voice_enabled,
+            'engine': 'pyttsx3' if self.engine else None
         }
+
+    def update_settings(self, rate: int = None, volume: float = None, enabled: bool = None):
+        """
+        Update voice settings
+
+        Args:
+            rate: Speech rate
+            volume: Volume level
+            enabled: Whether voice is enabled
+        """
+        if rate is not None:
+            self.set_speech_rate(rate)
+
+        if volume is not None:
+            self.set_volume(volume)
+
+        if enabled is not None:
+            self.set_voice_enabled(enabled)
+
+        logger.info("Voice settings updated")

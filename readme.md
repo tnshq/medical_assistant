@@ -1,52 +1,36 @@
-# MediScan: Voice-Assisted Prescription and Medicine Label Scanner for Reminders and Expiry Alerts (MS-VA)
+# MediScan: Voice-Assisted Medicine Scanner 💊🔊
 
 ## Overview
 
-**MediScan MS-VA** is a comprehensive medicine management solution built with Streamlit and Python. It leverages advanced OCR, natural language processing, and voice technologies to help users scan medicine labels and prescriptions, extract structured information, set reminders, track expiry, and receive voice notifications. The app is designed for ease of use, reliability, and extensibility.
+MediScan is a comprehensive voice-assisted prescription and medicine label scanner designed specifically for elderly users. It combines advanced OCR technology with user-friendly voice feedback to help seniors manage their medications safely and effectively.
 
----
+## Features
 
-## Requirements
+### 🔍 Advanced OCR Scanning
+- **Medicine Label Recognition**: Automatically extracts medicine names, dosages, expiry dates, batch numbers, and manufacturer information
+- **Prescription Processing**: Reads both handwritten and printed prescriptions
+- **Dual OCR Engine**: Google Vision API for high accuracy + EasyOCR as fallback
+- **Smart Text Processing**: Intelligent text extraction and structure recognition
 
-```txt
-streamlit>=1.28.0
-opencv-python-headless>=4.8.0
-numpy>=1.24.0
-pillow>=10.0.0
-pytesseract>=0.3.10
-easyocr>=1.7.0
-pyttsx3>=2.90
-gtts>=2.3.2
-pygame>=2.5.0
-pandas>=2.0.0
-plotly>=5.15.0
-```
+### 🔊 Voice-Assisted Interface
+- **Elderly-Friendly Voice**: Clear, slow speech optimized for senior users
+- **Automatic Announcements**: Reads scan results and medicine information aloud
+- **Voice Reminders**: Spoken medicine reminders at scheduled times
+- **Customizable Voice Settings**: Adjustable speed, volume, and voice selection
 
----
+### ⏰ Smart Reminder System
+- **Flexible Scheduling**: Daily, twice daily, three times daily, weekly reminders
+- **Visual & Audio Alerts**: Both on-screen notifications and voice announcements
+- **Compliance Tracking**: Monitor taken vs missed medications
+- **Expiry Warnings**: Automatic alerts for expired or soon-to-expire medicines
 
-## Installation
+### 📊 Medicine Database
+- **Comprehensive Storage**: Save all scanned medicines with detailed information
+- **Search & Filter**: Find medicines by name, manufacturer, or other criteria
+- **Expiry Management**: Track expiry dates and get proactive warnings
+- **Export Capabilities**: Export data to CSV for external use
 
-1. **Install Tesseract OCR:**
-   - Windows: Download from https://github.com/UB-Mannheim/tesseract/wiki
-   - Linux: `sudo apt install tesseract-ocr`
-   - macOS: `brew install tesseract`
-
-2. **Clone and setup:**
-```bash
-git clone <your-repo-url>
-cd mediscan-ms-va
-pip install -r requirements.txt
-```
-
----
-
-# Complete Project Structure and Required Datasets for MediScan MS-VA
-
-Below is a detailed structure for your project, including all main code files, folders, and recommended datasets for development, testing, and demonstration.
-
----
-
-## Project Directory Structure
+## Project Structure
 
 ```
 mediscan-ms-va/
@@ -54,289 +38,296 @@ mediscan-ms-va/
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # Project documentation
 ├── backend/                    # Core backend modules
-│   ├── __init__.py             # Backend package initialization
-│   ├── ocr_processor.py        # OCR processing (EasyOCR/Tesseract)
-│   ├── medicine_extractor.py   # Extracts medicine info from OCR text
-│   ├── reminder_system.py      # Medicine reminders & notifications
-│   ├── voice_assistant.py      # Text-to-speech and voice feedback
-│   └── database_handler.py     # Data persistence (JSON-based)
-├── data/                       # Application data (auto-created)
-│   ├── medicines.json          # Medicine inventory (auto-generated)
-│   ├── reminders.json          # Reminder settings (auto-generated)
-│   └── settings.json           # App/user settings (auto-generated)
-├── dataset/                    # Required datasets for testing/demo
-│   ├── labels/                 # Sample medicine label images (JPEG/PNG)
-│   ├── prescriptions/          # Sample prescription images (JPEG/PNG)
-│   └── medicines.csv           # Structured medicine info (CSV, optional)
-└── .gitignore                  # (Optional) Ignore data/dataset files in git
+│   ├── __init__.py            # Backend package initialization
+│   ├── ocr_processor.py       # OCR processing (Google Vision + EasyOCR)
+│   ├── medicine_extractor.py  # Medicine info extraction from OCR text
+│   ├── reminder_system.py     # Medicine reminders & notifications
+│   ├── voice_assistant.py     # Text-to-speech and voice feedback
+│   └── database_handler.py    # Data persistence (JSON-based)
+├── data/                      # Application data (auto-created)
+│   ├── medicines.json         # Medicine inventory
+│   ├── reminders.json         # Reminder settings
+│   ├── settings.json          # App settings
+│   └── scan_history.json      # Scan history
+└── dataset/                   # Sample data for testing
+    ├── labels/                # Sample medicine label images
+    ├── prescriptions/         # Sample prescription images
+    └── medicines.csv          # Sample medicine data
 ```
 
----
+## Installation & Setup
 
-## Required Datasets
+### Prerequisites
+- Python 3.8 or higher
+- pip package manager
+- Google Vision API key (optional, for enhanced OCR)
 
-### 1. `dataset/labels/`
-- **Purpose:** Store sample images of medicine labels for OCR and extraction testing.
-- **Content:** JPEG/PNG images of medicine strips, bottles, boxes, etc.
-- **Example Files:**
-  - `paracetamol_strip.jpg`
-  - `amoxicillin_bottle.png`
-  - `ibuprofen_box.jpeg`
+### Step 1: Clone or Download
+```bash
+# If using git
+git clone <repository-url>
+cd mediscan-ms-va
 
-### 2. `dataset/prescriptions/`
-- **Purpose:** Store sample images of prescriptions for multi-medicine and instruction extraction.
-- **Content:** JPEG/PNG scans or photos of handwritten or printed prescriptions.
-- **Example Files:**
-  - `prescription_01.jpg`
-  - `prescription_dr_singh.png`
-  - `prescription_child_fever.jpeg`
+# Or download and extract the project files
+```
 
-### 3. `dataset/medicines.csv` (optional but recommended)
-- **Purpose:** Provide a structured reference database for medicine validation and extraction accuracy.
-- **Content:** CSV file with columns such as:
-  - `medicine_name`
-  - `generic_name`
-  - `category`
-  - `manufacturer`
-  - `expiry_date`
-  - `batch_number`
-  - `dosage_form`
-  - `strength`
-- **Example Row:**
-  ```
-  Paracetamol,Acetaminophen,Analgesic,ABC Pharma,2025-12-31,B12345,Tablet,500mg
-  ```
+### Step 2: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
----
+### Step 3: Set Up Google Vision API (Optional)
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable the Vision API
+4. Create API credentials (API key)
+5. Set environment variable:
+   ```bash
+   export GOOGLE_VISION_API_KEY="your-api-key-here"
+   ```
+   Or enter it in the app settings
 
-## Notes on Dataset Usage
-
-- **OCR Testing:** Use images in `labels/` and `prescriptions/` for validating OCR extraction and medicine info parsing.
-- **Extraction Validation:** Use `medicines.csv` to cross-check extracted names, dosages, expiry dates, and other fields.
-- **Demo & Documentation:** Reference these datasets in your documentation and demo scripts to show real-world usage.
-- **Unit Testing:** Write automated tests using these sample files to ensure extraction and reminder logic works as expected.
-
----
-
-## Example Dataset Sources
-
-- [RxImage API](https://rximage.nlm.nih.gov/) – Medicine label images
-- [OpenFDA Drug Label Dataset](https://open.fda.gov/data/drug/label/) – Structured drug info
-- [Kaggle Medical Prescription Datasets](https://www.kaggle.com/datasets) – Prescription images
-
----
-
-## Best Practices
-
-- **Anonymize sensitive data** in prescription images.
-- **Use diverse samples** (different brands, forms, handwriting styles).
-- **Document your dataset** (add a `README.md` in the `dataset/` folder describing sources and usage).
-
----
-
-This structure ensures your project is organized, testable, and ready for real-world
----
-
-## Features
-
-### 🔍 OCR & Text Extraction
-- **Dual Engine Support**: EasyOCR (default) and Tesseract OCR
-- **Medicine Label Scanning**: Extract name, expiry date, batch number, dosage, manufacturer
-- **Prescription Scanning**: Extract multiple medicines, doctor info, patient details
-- **Image Preprocessing**: Noise reduction, contrast enhancement, text region detection, resizing for better accuracy
-- **Multi-language Support**: English and Hindi text recognition
-
-### 💊 Medicine Management
-- **Smart Extraction**: Medicine names, dosages, forms (tablet/capsule/syrup/injection/cream/drops)
-- **Expiry Tracking**: Automatic calculation of days until expiry, expiry alerts, and dashboard
-- **Batch & Manufacturing Info**: Extract and store batch numbers, manufacturing dates, and use-by dates
-- **Medicine Validation**: Built-in database for common medicines, generic names, and categories
-- **Search & Filter**: Find medicines by name, expiry status, manufacturer, form, and batch number
-- **Inventory Management**: Add, edit, delete medicines; backup and restore data
-
-### ⏰ Reminder System
-- **Flexible Scheduling**: Daily, twice daily, three times daily, weekly, custom times
-- **Smart Notifications**: Expiry alerts, take medicine reminders, voice announcements
-- **Compliance Tracking**: Track taken vs missed doses, history, and analytics
-- **History & Analytics**: Detailed compliance reports, missed/taken counts, and trends
-- **Pause/Resume/Delete Reminders**: Manage reminders for each medicine
-
-### 🔊 Voice Assistant
-- **Dual TTS Engines**: pyttsx3 (offline) and Google TTS (online)
-- **Multi-language**: Support for English, Hindi, Spanish, French, German
-- **Smart Announcements**: Scan results, reminders, expiry alerts, compliance feedback
-- **Voice Feedback**: Confirmation of actions, medication instructions, expiry warnings
-- **Customizable Speech Rate and Volume**: Adjust voice properties for accessibility
-
-### 📊 Analytics & Insights
-- **Expiry Dashboard**: Visual charts showing medicine status, expiring soon, expired
-- **Compliance Metrics**: Track medication adherence over time, missed/taken doses
-- **Timeline View**: See upcoming expirations and reminders
-- **Statistics**: Total medicines, expired count, active reminders, by form/manufacturer
-
-### 🗄️ Data Management
-- **JSON-based Storage**: Simple file storage for easy backup/restore
-- **Automatic Backup**: Optional daily backups of all data
-- **Data Validation**: Ensure data integrity and handle corruption
-- **Migration Support**: Easy upgrade path for future schema changes
-- **User Data & Settings**: Store user preferences, voice settings, and reminder configurations
-
----
-
-## Usage
-
-1. **Start the application:**
+### Step 4: Run the Application
 ```bash
 streamlit run App.py
 ```
 
-2. **Scan a Medicine or Prescription:**
-   - Go to "📷 Scan Medicine" tab
-   - Choose "Medicine Label" or "Prescription"
-   - Upload image or take photo
-   - Click "🔍 Process Image"
-   - Review extracted information
-   - Set reminders if needed
+The application will open in your default web browser at `http://localhost:8501`
 
-3. **Manage Medicines:**
-   - View all scanned medicines in "💊 My Medicines"
-   - Search and filter by various criteria
-   - Get voice feedback on medicine details
-   - Delete or edit medicine entries
+## Usage Guide
 
-4. **Setup Reminders:**
-   - Configure reminder schedules for each medicine
-   - Set daily reminder times
-   - Track compliance in "⏰ Reminders" tab
-   - Get voice notifications for due medicines
+### 🔍 Scanning Medicines
 
-5. **Monitor Analytics:**
-   - View expiry status charts in "📊 Analytics"
-   - Track medication compliance over time
-   - See upcoming expirations and alerts
+1. **Navigate to "Scan Medicine/Prescription"**
+2. **Upload Image**: Click "Choose an image file" and select a clear photo
+3. **Select Scan Type**: Choose between:
+   - Medicine Label
+   - Handwritten Prescription  
+   - Printed Prescription
+4. **Process**: Click "Scan and Extract"
+5. **Review Results**: Check extracted information
+6. **Save**: Save medicines to database or set reminders
 
----
+### ⏰ Setting Up Reminders
+
+1. **Go to "Medicine Reminders" tab**
+2. **Add New Reminder**: Fill in medicine details
+3. **Set Schedule**: Choose frequency and times
+4. **Configure**: Add special instructions if needed
+5. **Activate**: Create the reminder
+
+### 🔊 Voice Features
+
+1. **Enable Voice**: Toggle voice assistant in sidebar
+2. **Adjust Settings**: Go to Settings to modify voice speed/volume
+3. **Test Voice**: Use "Test Voice" button to verify functionality
+4. **Automatic Announcements**: Voice reads scan results automatically
 
 ## Configuration
 
-### Voice Assistant Settings
-- Enable/disable voice feedback
-- Choose language (English, Hindi, etc.)
-- Select TTS engine (pyttsx3 vs gTTS)
-- Adjust speech rate and volume
+### Voice Settings
+- **Speech Rate**: 100-250 words per minute (default: 150)
+- **Volume**: 0.0-1.0 (default: 0.9)
+- **Language**: English (US/UK), Hindi
+- **Voice Type**: Automatically selects clearest voice for elderly users
 
-### Reminder Settings  
-- Set default reminder time
-- Configure days before expiry to alert
-- Choose notification preferences
-- Pause, resume, or delete reminders
+### OCR Settings  
+- **Primary Engine**: Google Vision API (high accuracy) or EasyOCR (offline)
+- **API Key**: Google Vision API key for premium OCR features
+- **Fallback**: Automatic fallback to EasyOCR if Vision API unavailable
 
-### OCR Settings
-- Select OCR engine (EasyOCR recommended)
-- Configure image preprocessing options
-- Set confidence thresholds
+### Reminder Settings
+- **Default Time**: Default reminder time for new medications
+- **Expiry Alerts**: Days before expiry to show warnings (default: 7)
+- **Notifications**: Enable/disable various notification types
 
-### Data & Backup
-- Automatic backup of medicines and reminders
-- Restore from backup file
-- Clean up old data by age
+## API Keys & External Services
 
----
+### Google Vision API (Recommended)
+- **Purpose**: High-accuracy OCR for medicine labels and prescriptions
+- **Setup**: Get API key from Google Cloud Console
+- **Cost**: Pay-per-use (first 1000 requests/month free)
+- **Fallback**: EasyOCR used if not available
 
-## Technical Details
-
-### OCR Processing Pipeline
-1. **Image Preprocessing**: Noise reduction, contrast enhancement, resizing
-2. **Text Detection**: EasyOCR or Tesseract text region detection
-3. **Text Extraction**: Multi-language OCR with confidence scoring
-4. **Post-processing**: Text cleaning, error correction, field extraction
-
-### Medicine Information Extraction
-- **Regex Patterns**: Sophisticated patterns for dates, dosages, batch numbers
-- **Context Analysis**: Smart field classification using surrounding text
-- **Date Normalization**: Handle multiple date formats (DD/MM/YYYY, MM/YY, etc.)
-- **Medicine Name Detection**: Filter out common words, validate against database
-- **Manufacturer & Batch Extraction**: Identify and extract manufacturer and batch info
-
-### Reminder System
-- **Scheduling Algorithms**: Calculate next reminder time based on type (daily, weekly, etc.)
-- **History Tracking**: Store taken/missed events for compliance analytics
-- **Expiry Alerts**: Notify user before expiry based on settings
-
-### Voice Assistant
-- **pyttsx3**: Offline, customizable, supports multiple voices
-- **gTTS**: Online, high-quality, supports many languages
-- **Voice Feedback**: Announce reminders, expiry, scan results, and compliance
-
-### Data Storage
-- **JSON-based**: Simple file storage for easy backup/restore
-- **Automatic Backup**: Optional daily backups of all data
-- **Data Validation**: Ensure data integrity and handle corruption
-- **Migration Support**: Easy upgrade path for future schema changes
-
----
+### EasyOCR (Included)
+- **Purpose**: Free, offline OCR processing
+- **Setup**: Installed automatically with requirements
+- **Accuracy**: Good for printed text, limited for handwriting
+- **Performance**: Slower than Google Vision but free
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Tesseract not found:**
-   ```bash
-   # Linux/Mac
-   which tesseract
-   
-   # Windows - update path in ocr_processor.py
-   pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-   ```
+**1. Import Errors**
+```
+Error: Failed to import backend modules
+```
+**Solution**: Ensure all files are in correct directories and dependencies installed
 
-2. **Poor OCR results:**
-   - Ensure good image quality (high resolution, good lighting)
-   - Try different OCR engines (EasyOCR vs Tesseract)
-   - Check image preprocessing settings
+**2. OCR Not Working**
+```
+Error: Could not extract text from image
+```
+**Solutions**:
+- Check image quality (clear, well-lit, high resolution)
+- Verify API key if using Google Vision
+- Try different OCR engine in settings
 
-3. **Voice not working:**
-   - Install system TTS dependencies
-   - For pyttsx3: Install espeak (Linux) or use built-in TTS
-   - For gTTS: Ensure internet connection
+**3. Voice Not Working**
+```
+Error: Voice assistant not available
+```
+**Solutions**:
+- Check audio drivers
+- Try different voice in settings
+- Restart application
 
-4. **Missing dependencies:**
-   ```bash
-   pip install --upgrade -r requirements.txt
-   ```
+**4. Reminder Issues**
+```
+Error: Failed to create reminder
+```
+**Solutions**:
+- Check all required fields filled
+- Verify date/time formats
+- Check file permissions in data directory
 
----
+### Performance Tips
 
-## GitHub References
+1. **Image Quality**: Use clear, well-lit photos for best OCR results
+2. **Google Vision**: Use API key for better accuracy on complex prescriptions
+3. **Voice Settings**: Adjust speech rate for user comfort (slower for elderly)
+4. **Regular Cleanup**: Use database cleanup features for old data
 
-Similar projects for inspiration and comparison:
+## Similar Projects & References
 
-- **[VedantKale106/MediScan](https://github.com/VedantKale106/MediScan)**: Medicine scanner with OCR
-- **[aayushdubey-codes/MediScanner](https://github.com/aayushdubey-codes/MediScanner)**: OCR-based medicine label reader
-- **[sriphaniN/Prescription-Label-Reading](https://github.com/sriphaniN/Prescription-Label-Reading)**: Prescription to speech conversion
-- **[Franky1/Streamlit-Tesseract](https://github.com/Franky1/Streamlit-Tesseract)**: Streamlit OCR example
-- **[ameera3/OCR_Expiration_Date](https://github.com/ameera3/OCR_Expiration_Date)**: Expiry date extraction
-- **[Naveen-S6/Data_Extraction_Healthcare_Project](https://github.com/Naveen-S6/Data_Extraction_Healthcare_Project)**: Medical data extraction
-- **[LeadingIndiaAI/Extraction-of-Information-from-Medicines](https://github.com/LeadingIndiaAI/Extraction-of-Information-from-Medicines)**: Medicine info extraction
+Here are some GitHub projects related to medical OCR and medicine management:
 
----
+### Medical OCR Projects
+1. **[Medical-OCR-Data-Extraction](https://github.com/Tanguy9862/Medical-OCR-Data-Extraction)** - OCR for medical documents
+2. **[MediScribe-OCR](https://github.com/Shriram2005/MediScribe-OCR)** - Medical prescription OCR system
+3. **[Medical-Data-Extraction](https://github.com/prathyyyyy/Medical-Data-Extraction)** - Extract data from medical documents
+4. **[medical-data-extraction](https://github.com/abhijeetk597/medical-data-extraction)** - OCR project for medical data
+5. **[Medical-Prescription-OCR](https://github.com/Aniket025/Medical-Prescription-OCR)** - Reading medical prescriptions
+
+### Medicine Reminder Projects
+6. **[medical-reminder](https://github.com/PMO-IT/medical-reminder)** - Java-based text-to-speech medicine reminder
+7. **[medsched](https://github.com/BVNCodeTech/medsched)** - Self-hosted medical reminder app
+8. **[Medecro_AI_PERSONALIZED_PLATFORM](https://github.com/GautamBytes/Medecro_AI_PERSONALIZED_PLATFORM)** - AI personalized medical platform
+
+### OCR Technology Projects
+9. **[easy-paddle-ocr](https://github.com/theos-ai/easy-paddle-ocr)** - Easy OCR using PaddleOCR
+10. **[optical-character-recognition](https://github.com/limchiahooi/optical-character-recognition)** - OCR in Python
+11. **[itsitgroup/ocr-streamlit-demo](https://github.com/itsitgroup/ocr-streamlit-demo)** - Streamlit OCR application
+
+## Development Blueprint
+
+### Core Technologies
+- **Frontend**: Streamlit (Python web framework)
+- **OCR**: Google Vision API + EasyOCR
+- **Voice**: pyttsx3 (Text-to-speech)
+- **Data**: JSON file storage
+- **Images**: PIL/Pillow for image processing
+- **UI**: HTML/CSS for custom styling
+
+### Key Code Components
+
+#### 1. OCR Processing (`ocr_processor.py`)
+```python
+class OCRProcessor:
+    def __init__(self, api_key=None):
+        # Initialize Google Vision API and EasyOCR
+
+    def process_image(self, image, scan_type):
+        # Process image with OCR engines
+        # Return structured text results
+```
+
+#### 2. Medicine Extraction (`medicine_extractor.py`)
+```python
+class MedicineExtractor:
+    def extract_medicines(self, ocr_result, scan_type):
+        # Parse OCR text for medicine information
+        # Return structured medicine data
+```
+
+#### 3. Voice Assistant (`voice_assistant.py`)
+```python
+class VoiceAssistant:
+    def __init__(self, language="en-US"):
+        # Initialize TTS engine with elderly-friendly settings
+
+    def speak_medicine_reminder(self, medicine_name, dosage):
+        # Speak medicine reminders clearly
+```
+
+#### 4. Reminder System (`reminder_system.py`)
+```python
+class ReminderSystem:
+    def create_reminder(self, reminder_data):
+        # Create and schedule medicine reminders
+
+    def get_due_reminders(self):
+        # Check for due reminders
+```
+
+#### 5. Database Handler (`database_handler.py`)
+```python
+class DatabaseHandler:
+    def save_medicine(self, medicine_data):
+        # Save medicine to JSON database
+
+    def get_expiring_medicines(self, days_ahead):
+        # Get medicines expiring soon
+```
 
 ## Contributing
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature-name`
-3. Make changes and test thoroughly
-4. Submit pull request with clear description
+Contributions are welcome! Please follow these guidelines:
 
----
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature-name`
+3. **Make changes** with proper documentation
+4. **Test thoroughly** with various medicine images
+5. **Submit pull request** with clear description
+
+### Development Setup
+```bash
+# Clone repository
+git clone <repo-url>
+cd mediscan-ms-va
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run in development mode
+streamlit run App.py --server.runOnSave true
+```
 
 ## License
 
-MIT License - see LICENSE file for details
+This project is open source and available under the MIT License.
+
+## Support
+
+For support, issues, or feature requests:
+1. **Check troubleshooting section** above
+2. **Review similar projects** for additional insights
+3. **Create GitHub issue** with detailed description
+4. **Include error logs** and system information
+
+## Acknowledgments
+
+- **Google Vision API** for advanced OCR capabilities
+- **EasyOCR** for free OCR processing
+- **Streamlit** for rapid web app development
+- **pyttsx3** for text-to-speech functionality
+- **Open source community** for inspiration and libraries
 
 ---
 
-## Disclaimer
-
-⚠️ **Important**: This application is for informational purposes only. Always consult healthcare professionals for medical advice. The OCR results may contain errors and should be verified manually.
-
----
+**Made with ❤️ for elderly care and medication safety**
